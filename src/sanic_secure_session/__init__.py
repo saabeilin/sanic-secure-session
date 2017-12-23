@@ -1,8 +1,8 @@
 from datetime import datetime
-from itsdangerous import Signer, BadData
+
+from itsdangerous import Signer
 from sanic import Sanic
 
-from sanic_secure_session.backends import FakeStorageBackend
 from sanic_secure_session.session import Session
 
 
@@ -39,8 +39,8 @@ class SanicSession:
             sid = Signer(self.secret_key).unsign(signed_sid).decode('ascii')
         except:
             sid = None
-
-        request['session'] = await self.storage_backend.load(sid) or Session()
+        session = await self.storage_backend.load(sid) if sid else None
+        request['session'] = session or Session()
 
     async def save_session(self, request, response):
         # after each request save the session,
