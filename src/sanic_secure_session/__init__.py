@@ -1,3 +1,4 @@
+from datetime import datetime
 from itsdangerous import Signer, BadData
 from sanic import Sanic
 
@@ -8,9 +9,20 @@ from sanic_secure_session.session import Session
 class SanicSession:
     cookie_name = 'session'
 
-    def __init__(self, app=None, secret_key=None, storage_backend=None):
+    def __init__(self, app=None, secret_key=None, storage_backend=None,
+                 domain=None,
+                 ttl=None,
+                 secure=False,
+                 http_only=True,
+                 same_site=None,
+                 ):
         self.secret_key = secret_key
         self.storage_backend = storage_backend
+        self.domain = domain
+        self.ttl = ttl
+        self.secure = secure
+        self.http_only = http_only
+        self.same_site = same_site
         if app is not None:
             self.init_app(app)
 
@@ -22,11 +34,10 @@ class SanicSession:
     async def open_session(self, request):
         # before each request initialize a session
         # using the client's request
-        # await session_interface.open(request)
         signed_sid = request.cookies.get(self.cookie_name)
         try:
             sid = Signer(self.secret_key).unsign(signed_sid).decode('ascii')
-        except BadData:
+        except:
             sid = None
 
         request['session'] = await self.storage_backend.load(sid) or Session()
@@ -34,6 +45,13 @@ class SanicSession:
     async def save_session(self, request, response):
         # after each request save the session,
         # pass the response to set client cookies
-        # await session_interface.save(request, response)
         await self.storage_backend.save(request['session'].sid, request['session'])
-        response.cookies[self.cookie_name] = Signer(self.secret_key).sign(request['session'].sid.encode('ascii')).decode('ascii')
+        session_cookie = Signer(self.secret_key).sign(request['session'].sid.encode('ascii')).decode('ascii')
+        response.cookies[self.cookie_name] = session_cookie
+        if self.ttl:
+            response.cookies[self.cookie_name]['max-age'] = self.ttl.total_seconds()
+            response.cookies[self.cookie_name]['expires'] = datetime.utcnow() + self.ttl
+        if self.domain:
+            response.cookies[self.cookie_name]['domain'] = self.domain
+        if self.http_only:
+            response.cookies[self.cookie_name]['httponly'] = True
