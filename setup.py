@@ -34,12 +34,12 @@ setup(
     license='MIT license',
     description='A sessions plugin for Sanic',
     long_description='%s\n%s' % (
-        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.rst')),
+        re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.md')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
     ),
     author='Sergei Beilin',
     author_email='saabeilin@gmail.com',
-    url='https://github.com/saabeilin/sanic-sessions',
+    url='https://github.com/saabeilin/sanic-secure-session',
     # packages=find_packages('src'),
     packages=['sanic_secure_session'],
     package_dir={'': 'src'},
