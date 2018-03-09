@@ -29,10 +29,10 @@ def read(*names, **kwargs):
 
 
 setup(
-    name='sanic-sessions',
+    name='sanic-secure-session',
     version='0.2.0',
     license='MIT license',
-    description='A sessions plugin for Sanic',
+    description='A server-side secure sessions plugin for Sanic',
     long_description='%s\n%s' % (
         re.compile('^.. start-badges.*^.. end-badges', re.M | re.S).sub('', read('README.md')),
         re.sub(':[a-z]+:`~?(.*?)`', r'``\1``', read('CHANGELOG.rst'))
