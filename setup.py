@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 setup(
     name='sanic-secure-session',
-    version='0.2.0',
+    version='0.2.1',
     license='MIT license',
     description='A server-side secure sessions plugin for Sanic',
     long_description='%s\n%s' % (
